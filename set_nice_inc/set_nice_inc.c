@@ -1,8 +1,12 @@
+#include <linux/syscalls.h>
 #include <linux/kernel.h>
-#include <linux/sched.h>
+#include <asm/errno.h>
 
-asmlinkage long set_nice_inc(pid_t pid, int value) {
-	extern struct* task_struct = find_task_by_vpid(pid);
-	task_struct->nice_inc = value;
-	return task_struct->nice_inc;
+asmlinkage long sys_set_nice_inc(pid_t pid, int value) {
+	struct task_struct* p = find_task_by_vpid(pid);
+	if (p != NULL) {
+		p->nice_inc = value;
+		return 0;
+	}
+	return -ESRCH;
 }
